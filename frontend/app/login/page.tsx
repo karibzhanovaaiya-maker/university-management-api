@@ -5,9 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
+import { useT } from "@/lib/i18n";
+import { Controls } from "@/components/Controls";
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const { t } = useT();
   const router = useRouter();
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
@@ -22,37 +25,43 @@ export default function LoginPage() {
       await login(userName.trim(), password);
       router.replace("/dashboard");
     } catch (e) {
-      setErr(e instanceof ApiError ? e.message : "Login failed");
+      setErr(e instanceof ApiError ? e.message : t("auth.loginFailed"));
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-5">
-      <div className="mb-8 text-center">
-        <h1 className="text-2xl font-bold">🎓 University</h1>
-        <p className="mt-1 text-sm text-slate-400">Sign in to your account</p>
+    <main className="mx-auto flex min-h-screen max-w-md flex-col px-5">
+      <div className="flex justify-between py-5">
+        <Link href="/" className="font-bold">🎓 University</Link>
+        <Controls />
       </div>
-      <form onSubmit={onSubmit} className="card space-y-4 p-6">
-        <div>
-          <label className="label">Username</label>
-          <input className="input" value={userName} onChange={(e) => setUserName(e.target.value)}
-            placeholder="admin" autoCapitalize="none" autoComplete="username" required />
+      <div className="flex flex-1 flex-col justify-center pb-16">
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl font-bold">{t("auth.signInTitle")}</h1>
+          <p className="mt-1 text-sm text-muted">{t("auth.signInSub")}</p>
         </div>
-        <div>
-          <label className="label">Password</label>
-          <input className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••" autoComplete="current-password" required />
-        </div>
-        {err && <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-400">{err}</p>}
-        <button className="btn-primary w-full" disabled={loading}>
-          {loading ? "Signing in…" : "Sign in"}
-        </button>
-      </form>
-      <p className="mt-5 text-center text-sm text-slate-400">
-        No account? <Link href="/register" className="text-accent">Create one</Link>
-      </p>
+        <form onSubmit={onSubmit} className="card space-y-4 p-6">
+          <div>
+            <label className="label">{t("auth.username")}</label>
+            <input className="input" value={userName} onChange={(e) => setUserName(e.target.value)}
+              placeholder="admin" autoCapitalize="none" autoComplete="username" required />
+          </div>
+          <div>
+            <label className="label">{t("auth.password")}</label>
+            <input className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••" autoComplete="current-password" required />
+          </div>
+          {err && <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-500">{err}</p>}
+          <button className="btn-primary w-full" disabled={loading}>
+            {loading ? t("auth.signingIn") : t("auth.signIn")}
+          </button>
+        </form>
+        <p className="mt-5 text-center text-sm text-muted">
+          {t("auth.noAccount")} <Link href="/register" className="text-accent">{t("auth.createOne")}</Link>
+        </p>
+      </div>
     </main>
   );
 }

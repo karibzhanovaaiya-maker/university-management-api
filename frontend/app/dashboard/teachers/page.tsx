@@ -4,11 +4,14 @@ import { useState } from "react";
 import { useApi } from "@/lib/hooks";
 import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { useT } from "@/lib/i18n";
+import { PageHelp } from "@/components/PageHelp";
 
 type Teacher = { id: number; teacherName: string; courseCount: number };
 
 export default function TeachersPage() {
   const { me } = useAuth();
+  const { t } = useT();
   const isAdmin = me?.role === "ADMIN";
   const { data, loading, error, reload } = useApi<Teacher[]>("/api/teachers");
   const [name, setName] = useState("");
@@ -42,36 +45,37 @@ export default function TeachersPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">🧑‍🏫 Teachers</h1>
+      <h1 className="text-2xl font-bold">🧑‍🏫 {t("nav.teachers")}</h1>
+      <PageHelp k="teachers" />
 
       {isAdmin && (
         <form onSubmit={create} className="card flex flex-col gap-3 p-5 sm:flex-row sm:items-end">
           <div className="flex-1">
-            <label className="label">Teacher name</label>
+            <label className="label">{t("f.teacherName")}</label>
             <input className="input" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Dr. Smith" />
           </div>
-          <button className="btn-primary sm:w-40" disabled={busy}>{busy ? "Adding…" : "Add teacher"}</button>
+          <button className="btn-primary sm:w-44" disabled={busy}>{busy ? t("common.loading") : t("btn.addTeacher")}</button>
         </form>
       )}
-      {msg && <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-400">{msg}</p>}
+      {msg && <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-500">{msg}</p>}
 
       {loading ? (
-        <p className="text-slate-500">Loading…</p>
+        <p className="text-muted">{t("common.loading")}</p>
       ) : error ? (
-        <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-400">{error}</p>
+        <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-500">{error}</p>
       ) : (
         <div className="grid gap-3">
-          {data && data.length > 0 ? data.map((t) => (
-            <div key={t.id} className="card flex items-center justify-between p-4">
+          {data && data.length > 0 ? data.map((tch) => (
+            <div key={tch.id} className="card flex items-center justify-between p-4">
               <div>
-                <div className="font-medium">{t.teacherName}</div>
-                <div className="text-sm text-slate-400">{t.courseCount} course(s)</div>
+                <div className="font-medium">{tch.teacherName}</div>
+                <div className="text-sm text-muted">{tch.courseCount} {t("u.courses")}</div>
               </div>
               {isAdmin && (
-                <button onClick={() => remove(t.id)} className="text-sm text-red-400 hover:underline">Delete</button>
+                <button onClick={() => remove(tch.id)} className="text-sm text-red-500 hover:underline">{t("common.delete")}</button>
               )}
             </div>
-          )) : <p className="text-slate-500">No teachers yet.</p>}
+          )) : <p className="text-muted">{t("common.none")}</p>}
         </div>
       )}
     </div>

@@ -1,21 +1,62 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "@/lib/auth";
+import { useT } from "@/lib/i18n";
+import { useTheme } from "@/lib/theme";
+import { Controls } from "@/components/Controls";
 
-export default function Home() {
-  const { me, ready } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!ready) return;
-    router.replace(me ? "/dashboard" : "/login");
-  }, [me, ready, router]);
+export default function Welcome() {
+  const { me } = useAuth();
+  const { t } = useT();
+  const { theme } = useTheme();
+  const logo = theme === "dark" ? "/iitu-dark.png" : "/iitu-light.png";
 
   return (
-    <main className="grid min-h-screen place-items-center">
-      <div className="animate-pulse text-slate-500">Loading…</div>
+    <main className="mx-auto max-w-3xl px-5 pb-16">
+      <header className="flex items-center justify-between py-5">
+        <img src={logo} alt="IITU" className="h-8 w-auto" />
+        <Controls />
+      </header>
+
+      <section className="pt-8 text-center sm:pt-14">
+        <span className="chip border-accent/40 text-accent">{t("welcome.tag")}</span>
+        <h1 className="mx-auto mt-4 max-w-2xl text-3xl font-bold sm:text-4xl">{t("welcome.title")}</h1>
+        <p className="mx-auto mt-3 max-w-xl text-muted">{t("welcome.subtitle")}</p>
+
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+          {me ? (
+            <Link href="/dashboard" className="btn-primary">{t("nav.home")} →</Link>
+          ) : (
+            <>
+              <Link href="/login" className="btn-primary">{t("welcome.login")}</Link>
+              <Link href="/register" className="btn-ghost">{t("welcome.register")}</Link>
+            </>
+          )}
+          <Link href="/wiki" className="btn-ghost">{t("welcome.wiki")}</Link>
+          <a href="/swagger-ui/index.html" target="_blank" rel="noreferrer" className="btn-ghost">
+            {t("welcome.swagger")} ↗
+          </a>
+        </div>
+      </section>
+
+      <section className="mt-12 grid gap-4 sm:grid-cols-3">
+        {[
+          ["🔐", t("welcome.f1t"), t("welcome.f1d")],
+          ["🧩", t("welcome.f2t"), t("welcome.f2d")],
+          ["📖", t("welcome.f3t"), t("welcome.f3d")],
+        ].map(([icon, title, desc]) => (
+          <div key={title} className="card p-5">
+            <div className="text-2xl">{icon}</div>
+            <div className="mt-2 font-semibold">{title}</div>
+            <p className="mt-1 text-sm text-muted">{desc}</p>
+          </div>
+        ))}
+      </section>
+
+      <footer className="mt-12 text-center text-xs text-muted">
+        kz.iitu · Spring Boot · PostgreSQL · Next.js — <code>karibzhanova.alma-ai.cc</code>
+      </footer>
     </main>
   );
 }

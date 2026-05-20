@@ -2,9 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+:root,
+[data-theme="dark"] {
+  --bg: 13 17 23;
+  --card: 22 27 34;
+  --line: 48 54 61;
+  --fg: 230 237 243;
+  --muted: 154 167 180;
+  --accent: 88 166 255;
+  --accent2: 63 185 80;
+  --code: 11 15 20;
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg: 246 248 250;
+  --card: 255 255 255;
+  --line: 208 215 222;
+  --fg: 31 35 40;
+  --muted: 101 109 118;
+  --accent: 9 105 218;
+  --accent2: 26 127 55;
+  --code: 240 243 246;
+  color-scheme: light;
+}
+
 html, body {
-  background: #0d1117;
-  color: #e6edf3;
+  background: rgb(var(--bg));
+  color: rgb(var(--fg));
   -webkit-font-smoothing: antialiased;
 }
 
@@ -12,13 +37,13 @@ html, body {
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-medium transition active:scale-[.98] disabled:opacity-50 disabled:pointer-events-none;
   }
-  .btn-primary { @apply btn bg-accent text-black hover:brightness-110; }
-  .btn-ghost   { @apply btn border border-line text-slate-200 hover:bg-white/5; }
+  .btn-primary { @apply btn bg-accent text-white hover:brightness-110; }
+  .btn-ghost   { @apply btn border border-line text-fg hover:bg-fg/5; }
   .input {
-    @apply w-full rounded-xl bg-black/30 border border-line px-3.5 py-2.5 text-slate-100
-           placeholder:text-slate-500 outline-none focus:border-accent;
+    @apply w-full rounded-xl bg-bg border border-line px-3.5 py-2.5 text-fg
+           placeholder:text-muted outline-none focus:border-accent;
   }
   .card { @apply rounded-2xl border border-line bg-card; }
-  .label { @apply block text-sm text-slate-400 mb-1.5; }
-  .chip { @apply inline-flex items-center rounded-full border border-line px-2.5 py-0.5 text-xs text-slate-300; }
+  .label { @apply block text-sm text-muted mb-1.5; }
+  .chip { @apply inline-flex items-center rounded-full border border-line px-2.5 py-0.5 text-xs text-muted; }
 }

@@ -4,17 +4,12 @@ import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth";
-
-const NAV = [
-  { href: "/dashboard", label: "Home", icon: "🏠" },
-  { href: "/dashboard/courses", label: "Courses", icon: "📚" },
-  { href: "/dashboard/teachers", label: "Teachers", icon: "🧑‍🏫" },
-  { href: "/dashboard/students", label: "Students", icon: "🎓" },
-  { href: "/dashboard/users", label: "Users", icon: "👥" },
-];
+import { useT } from "@/lib/i18n";
+import { Controls } from "@/components/Controls";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { me, ready, logout } = useAuth();
+  const { t } = useT();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -23,9 +18,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [ready, me, router]);
 
   if (!ready || !me) {
-    return <div className="grid min-h-screen place-items-center text-slate-500">Loading…</div>;
+    return <div className="grid min-h-screen place-items-center text-muted">{t("common.loading")}</div>;
   }
 
+  const NAV = [
+    { href: "/dashboard", label: t("nav.home"), icon: "🏠" },
+    { href: "/dashboard/courses", label: t("nav.courses"), icon: "📚" },
+    { href: "/dashboard/teachers", label: t("nav.teachers"), icon: "🧑‍🏫" },
+    { href: "/dashboard/students", label: t("nav.students"), icon: "🎓" },
+    { href: "/dashboard/users", label: t("nav.users"), icon: "👥" },
+  ];
   const isActive = (href: string) =>
     href === "/dashboard" ? pathname === href : pathname.startsWith(href);
 
@@ -38,23 +40,29 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {NAV.map((n) => (
             <Link key={n.href} href={n.href}
               className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition ${
-                isActive(n.href) ? "bg-accent/15 text-accent" : "text-slate-300 hover:bg-white/5"
+                isActive(n.href) ? "bg-accent/15 text-accent" : "text-fg hover:bg-fg/5"
               }`}>
               <span>{n.icon}</span> {n.label}
             </Link>
           ))}
+          <Link href="/wiki" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-fg hover:bg-fg/5">
+            <span>📖</span> {t("nav.wiki")}
+          </Link>
         </nav>
-        <div className="border-t border-line pt-3">
-          <div className="px-2 text-sm text-slate-300">{me.userName}</div>
-          <div className="px-2 pb-2"><span className="chip">{me.role}</span></div>
-          <button onClick={logout} className="btn-ghost w-full text-sm">Log out</button>
+        <div className="space-y-2 border-t border-line pt-3">
+          <Controls />
+          <div className="px-1 text-sm text-fg">{me.userName} <span className="chip ml-1">{me.role}</span></div>
+          <button onClick={logout} className="btn-ghost w-full text-sm">{t("logout")}</button>
         </div>
       </aside>
 
       {/* Top bar (mobile) */}
-      <header className="sticky top-0 z-10 flex items-center justify-between border-b border-line bg-card/90 px-4 py-3 backdrop-blur md:hidden">
+      <header className="sticky top-0 z-10 flex items-center justify-between gap-2 border-b border-line bg-card/90 px-4 py-3 backdrop-blur md:hidden">
         <span className="font-bold">🎓 University</span>
-        <button onClick={logout} className="text-sm text-slate-400">Log out</button>
+        <div className="flex items-center gap-2">
+          <Controls />
+          <button onClick={logout} className="text-sm text-muted">{t("logout")}</button>
+        </div>
       </header>
 
       <main className="mx-auto max-w-4xl p-4 md:p-8">{children}</main>
@@ -64,7 +72,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {NAV.map((n) => (
           <Link key={n.href} href={n.href}
             className={`flex flex-col items-center gap-0.5 py-2.5 text-[11px] ${
-              isActive(n.href) ? "text-accent" : "text-slate-400"
+              isActive(n.href) ? "text-accent" : "text-muted"
             }`}>
             <span className="text-lg">{n.icon}</span>
             {n.label}
