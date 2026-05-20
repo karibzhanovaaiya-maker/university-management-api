@@ -135,7 +135,7 @@ flowchart TD
   CF -->|HTTPS| NG["nginx :443 (reverse proxy)"]
   NG -->|"/ (static files)"| FE["Next.js export — out/"]
   NG -->|"/api · /auth · /swagger-ui"| API["Spring Boot app :8080 (java -jar, background service)"]
-  API -->|JDBC, localhost only| DB[("PostgreSQL :5432")]
+  API -->|"JDBC localhost only"| DB[("PostgreSQL :5432")]
   classDef n fill:#161b22,stroke:#30363d,color:#e6edf3;
   class B,CF,NG,FE,API,DB n;
       </pre></div>
@@ -223,7 +223,7 @@ classDiagram
     STUDENT
     USER
   }
-  Student "1" --> "1" User : OneToOne (user_id unique)
+  Student "1" --> "1" User : OneToOne
   Teacher "1" --> "*" Course : OneToMany
   Course "*" --> "1" Teacher : ManyToOne
   Student "*" --> "*" Course : ManyToMany
@@ -310,7 +310,7 @@ flowchart TD
   RE["CoursesRepository<br/>JpaRepository + JpaSpecificationExecutor"]
   EN["Course (entity)"]
   DB[("PostgreSQL")]
-  CO -->|validates / maps| DTO
+  CO -->|"validates and maps"| DTO
   CO -->|calls| SV
   SV -->|builds query| SP
   SV -->|uses| RE
@@ -471,19 +471,19 @@ sequenceDiagram
       <p class="sub">The decision flow every API call goes through.</p>
       <div class="diagram"><pre class="mermaid">
 flowchart TD
-  S([Incoming request]) --> TLS[Cloudflare + nginx, HTTPS]
+  S([Incoming request]) --> TLS[Cloudflare + nginx HTTPS]
   TLS --> R{Path?}
-  R -->|/ static| ST[Serve Next.js file] --> E([Response])
-  R -->|/api or /auth| PUB{Public endpoint?}
-  PUB -->|yes /auth, /public| CTRL
-  PUB -->|no| TOK{Valid JWT?}
-  TOK -->|no| E401[401 Unauthorized] --> E
-  TOK -->|yes| ROLE{Role allowed?}
-  ROLE -->|no| E403[403 Forbidden] --> E
-  ROLE -->|yes| CTRL[Controller → Service → Repository]
-  CTRL --> VAL{Valid + rules OK?}
-  VAL -->|no| ERR[GlobalExceptionHandler<br/>400 / 404 / 409] --> E
-  VAL -->|yes| DBOP[(DB read/write)] --> OK[200 / 201 / 204 JSON] --> E
+  R -->|"static page"| ST[Serve Next.js file] --> E([Response])
+  R -->|"api or auth"| PUB{Public endpoint?}
+  PUB -->|"yes"| CTRL
+  PUB -->|"no"| TOK{Valid JWT?}
+  TOK -->|"no"| E401[401 Unauthorized] --> E
+  TOK -->|"yes"| ROLE{Role allowed?}
+  ROLE -->|"no"| E403[403 Forbidden] --> E
+  ROLE -->|"yes"| CTRL[Controller to Service to Repository]
+  CTRL --> VAL{Valid and rules OK?}
+  VAL -->|"no"| ERR[GlobalExceptionHandler 400 404 409] --> E
+  VAL -->|"yes"| DBOP[(DB read write)] --> OK[200 201 204 JSON] --> E
       </pre></div>
       <h3>Explanation</h3>
       <p>Static pages are served straight from disk. API calls are gated by authentication then authorisation, then run through the controller→service→repository chain. Validation and business-rule failures are converted to the correct HTTP status by the global handler; success returns the appropriate 2xx with a JSON body.</p>
