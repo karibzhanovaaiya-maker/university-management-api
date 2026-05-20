@@ -9,6 +9,28 @@ Thymeleaf · PostgreSQL · Lombok · JUnit 5 + Mockito · springdoc OpenAPI
 > Built with AI assistance (allowed by the course if disclosed). The author understands
 > and can reproduce every part — see the lab map below.
 
+## Live
+
+- **App (UI):** https://karibzhanova.alma-ai.cc
+- **API docs (Swagger):** https://karibzhanova.alma-ai.cc/swagger-ui/index.html
+
+Single origin: nginx serves the static Next.js frontend at `/` and routes
+`/api`, `/auth`, `/swagger-ui` to the Spring Boot API — so there is no CORS and no
+separate public port. Runs as a `systemd` service on NixOS behind Cloudflare.
+
+## Frontend (`frontend/`)
+
+Mobile-first **Next.js + TypeScript + Tailwind** client, exported as static files.
+Registration/login store a JWT bearer token; the dashboard lists and creates courses,
+teachers, students and users via the API.
+
+```bash
+cd frontend
+pnpm install
+pnpm dev            # local dev (proxies /api,/auth to localhost:8080)
+pnpm run build:static   # production static export -> ./out
+```
+
 ---
 
 ## Quick start (local)
