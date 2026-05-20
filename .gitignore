@@ -35,3 +35,6 @@ application-local.properties
 # Course exam materials — kept local, not published (avoid leaking the exam bank)
 requirements.md
 roadmap.html
+
+# stray root copy of the profile image (the committed one lives in frontend/public)
+f40e44de-36f2-485e-b965-63e01fdf90cd.jpeg

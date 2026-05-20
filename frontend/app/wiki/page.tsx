@@ -34,9 +34,8 @@ export default function WikiPage() {
 
       {/* Profile */}
       <section className="card flex items-center gap-4 p-5">
-        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-accent text-xl font-bold text-white">
-          AK
-        </div>
+        <img src="/profile.jpg" alt="Aiya Karibzhanova"
+          className="h-16 w-16 shrink-0 rounded-full border border-line object-cover" />
         <div>
           <h1 className="text-xl font-bold">Aiya Karibzhanova</h1>
           <p className="text-sm text-muted">{t("wiki.role")}</p>
