@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
 import { useT } from "@/lib/i18n";
-import { TopNav } from "@/components/TopNav";
+import { PublicShell } from "@/components/PublicShell";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -32,9 +32,8 @@ export default function LoginPage() {
   }
 
   return (
-    <>
-      <TopNav />
-      <main className="mx-auto max-w-md px-5 pb-16 pt-12">
+    <PublicShell>
+      <div className="mx-auto max-w-md pt-4">
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-bold">{t("auth.signInTitle")}</h1>
           <p className="mt-1 text-sm text-muted">{t("auth.signInSub")}</p>
@@ -58,7 +57,7 @@ export default function LoginPage() {
         <p className="mt-5 text-center text-sm text-muted">
           {t("auth.noAccount")} <Link href="/register" className="text-accent">{t("auth.createOne")}</Link>
         </p>
-      </main>
-    </>
+      </div>
+    </PublicShell>
   );
 }

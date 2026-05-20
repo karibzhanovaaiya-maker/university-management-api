@@ -1,7 +1,7 @@
 "use client";
 
 import { useT } from "@/lib/i18n";
-import { TopNav } from "@/components/TopNav";
+import { PublicShell } from "@/components/PublicShell";
 
 const STACK = [
   "Spring Boot 3.5", "Java 17", "Spring Data JPA", "Hibernate", "Spring Security",
@@ -22,9 +22,8 @@ export default function WikiPage() {
   const { t, tArr } = useT();
 
   return (
-    <>
-    <TopNav />
-    <main className="mx-auto max-w-3xl px-5 pb-16 pt-6">
+    <PublicShell>
+      <div className="mx-auto max-w-3xl">
 
       {/* Profile */}
       <section className="card flex items-center gap-4 p-5">
@@ -83,7 +82,7 @@ psql university_db < backup.sql      # restore`}</pre>
           {t("wiki.openSwagger")} ↗
         </a>
       </section>
-    </main>
-    </>
+      </div>
+    </PublicShell>
   );
 }

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useT } from "@/lib/i18n";
-import { TopNav } from "@/components/TopNav";
+import { PublicShell } from "@/components/PublicShell";
 
 const BIO = {
   en: "Computer science student at IITU. Built this University Management system end-to-end — a Spring Boot REST API, PostgreSQL database, JWT security, and this Next.js interface.",
@@ -16,9 +16,8 @@ export default function AboutPage() {
   const { t, lang } = useT();
 
   return (
-    <>
-      <TopNav />
-      <main className="mx-auto max-w-2xl px-5 pb-16 pt-6">
+    <PublicShell>
+      <div className="mx-auto max-w-2xl">
         <section className="card overflow-hidden">
           <div className="flex flex-col items-center gap-4 p-7 text-center sm:flex-row sm:text-left">
             <img src="/profile.jpg" alt="Aiya Karibzhanova"
@@ -43,7 +42,7 @@ export default function AboutPage() {
           <Link href="/wiki" className="btn-ghost">{t("nav.wiki")}</Link>
           <a href="https://github.com/karibzhanovaaiya-maker/university-management-api" target="_blank" rel="noreferrer" className="btn-ghost">GitHub ↗</a>
         </div>
-      </main>
-    </>
+      </div>
+    </PublicShell>
   );
 }
