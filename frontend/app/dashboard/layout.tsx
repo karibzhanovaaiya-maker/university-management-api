@@ -45,6 +45,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <span>{n.icon}</span> {n.label}
             </Link>
           ))}
+          <Link href="/about" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-fg hover:bg-fg/5">
+            <span>👤</span> Aiya
+          </Link>
           <Link href="/wiki" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-fg hover:bg-fg/5">
             <span>📖</span> {t("nav.wiki")}
           </Link>

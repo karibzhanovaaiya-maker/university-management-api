@@ -33,6 +33,7 @@ export default function Welcome() {
               <Link href="/register" className="btn-ghost">{t("welcome.register")}</Link>
             </>
           )}
+          <Link href="/about" className="btn-ghost">👤 Aiya</Link>
           <Link href="/wiki" className="btn-ghost">{t("welcome.wiki")}</Link>
           <a href="/swagger-ui/index.html" target="_blank" rel="noreferrer" className="btn-ghost">
             {t("welcome.swagger")} ↗
