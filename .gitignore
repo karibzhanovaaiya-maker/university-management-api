@@ -1,0 +1,37 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Uploaded files (Lab 8)
+uploads/
+
+# Local env overrides
+application-local.properties
+*.env
+.env
+
+# Claude Code local settings
+.claude/
+
+# Course exam materials — kept local, not published (avoid leaking the exam bank)
+requirements.md
+roadmap.html
