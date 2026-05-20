@@ -36,6 +36,10 @@ export function TopNav() {
               {l.label}
             </Link>
           ))}
+          <a href="/uml.html"
+            className="whitespace-nowrap rounded-lg px-3 py-1.5 text-sm text-muted hover:bg-fg/5">
+            Docs (UML)
+          </a>
           <a href="/swagger-ui/index.html" target="_blank" rel="noreferrer"
             className="whitespace-nowrap rounded-lg px-3 py-1.5 text-sm text-muted hover:bg-fg/5">
             Swagger ↗

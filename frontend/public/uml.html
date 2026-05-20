@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>University Management — UML &amp; Architecture</title>
+<style>
+  :root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;--muted:#9aa7b4;--accent:#58a6ff;--accent2:#3fb950;--code:#0b0f14}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:15px}
+  a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--code);padding:1px 6px;border-radius:5px;font-size:13px;color:#ffa657}
+  .wrap{display:grid;grid-template-columns:270px 1fr;min-height:100vh}
+  nav.side{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;background:var(--card);border-right:1px solid var(--line);padding:20px 14px}
+  main{padding:30px 38px 120px;max-width:1000px}
+  @media(max-width:880px){.wrap{grid-template-columns:1fr}nav.side{position:static;height:auto}}
+  .brand{font-weight:700;color:#fff;margin-bottom:14px}
+  .brand small{display:block;color:var(--muted);font-weight:400;font-size:12px}
+  nav.side a{display:block;padding:6px 10px;border-radius:8px;color:var(--muted);font-size:13px}
+  nav.side a:hover{background:#1c2330;color:var(--txt);text-decoration:none}
+  .nav-group{margin:14px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#6b7681;padding-left:10px}
+  header.hero{background:linear-gradient(135deg,#161b22,#1c2330);border:1px solid var(--line);border-radius:14px;padding:26px 28px;margin-bottom:24px}
+  header.hero h1{margin:0 0 6px;font-size:25px}
+  header.hero p{margin:4px 0;color:var(--muted)}
+  section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin-bottom:22px;scroll-margin-top:14px}
+  section>h2{margin:0 0 4px;font-size:20px}
+  .sub{color:var(--muted);font-style:italic;margin:6px 0 14px;border-left:3px solid var(--accent);padding-left:12px}
+  .diagram{background:#0e1320;border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0;overflow-x:auto;text-align:center}
+  .mermaid{font-size:14px}
+  h3{font-size:15px;margin:18px 0 6px;color:#fff}
+  ul{margin:8px 0;padding-left:22px}li{margin:3px 0}
+  .pill{display:inline-block;background:#1c2330;border:1px solid var(--line);border-radius:99px;padding:2px 10px;font-size:12px;margin:2px}
+  .legend{font-size:13px;color:var(--muted);background:#0e1320;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:10px}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left}th{background:#1c2330}
+  footer{color:#6b7681;font-size:12px;text-align:center;padding:30px}
+  .top-actions a{display:inline-block;margin-right:8px;background:#1c2330;border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="side">
+    <div class="brand">UML &amp; Architecture<small>University Management · kz.iitu</small></div>
+    <div class="nav-group">Overview</div>
+    <a href="#intro">Introduction</a>
+    <a href="#usecase">1 · Use-case diagram</a>
+    <a href="#deploy">2 · Deployment diagram</a>
+    <a href="#layers">3 · Layered architecture</a>
+    <div class="nav-group">Structure</div>
+    <a href="#domain">4 · Domain class diagram</a>
+    <a href="#er">5 · ER diagram (database)</a>
+    <a href="#stackclass">6 · Layer class diagram</a>
+    <div class="nav-group">Behaviour</div>
+    <a href="#seq-login">7 · Sequence — Login (JWT)</a>
+    <a href="#seq-request">8 · Sequence — Secured request</a>
+    <a href="#seq-create">9 · Sequence — Create student</a>
+    <a href="#seq-delete">10 · Sequence — Delete teacher</a>
+    <a href="#activity">11 · Activity — request lifecycle</a>
+    <div class="nav-group">Links</div>
+    <a href="/">← Back to app</a>
+    <a href="/swagger-ui/index.html" target="_blank">Swagger ↗</a>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <h1>🧩 How the project works — UML &amp; Architecture</h1>
+      <p>Complete diagrams of the University Management system: structure (classes, database) and behaviour (sequences, activity), each with a full explanation.</p>
+      <div class="top-actions" style="margin-top:12px">
+        <a href="#usecase">Start reading ↓</a>
+        <a href="/wiki">Plain-English wiki</a>
+      </div>
+    </header>
+
+    <section id="intro">
+      <h2>Introduction</h2>
+      <p class="sub">One Spring Boot backend + one static Next.js frontend, behind nginx, talking to PostgreSQL.</p>
+      <p>The system is a classic <b>layered (n-tier) web application</b>:</p>
+      <ul>
+        <li><b>Presentation</b> — a static Next.js UI (browser) and a REST API (Spring MVC controllers).</li>
+        <li><b>Business</b> — Spring <code>@Service</code> classes hold the rules (validation, the "can't delete a teacher with courses" rule, etc.).</li>
+        <li><b>Persistence</b> — Spring Data JPA repositories map entities to PostgreSQL tables.</li>
+        <li><b>Cross-cutting</b> — Spring Security (JWT) for auth, a global exception handler for errors, OpenAPI for docs.</li>
+      </ul>
+      <div class="legend">Diagrams are rendered live with Mermaid. Scroll horizontally on small screens. Every diagram below is followed by a written explanation.</div>
+    </section>
+
+    <!-- 1 USE CASE -->
+    <section id="usecase">
+      <h2>1 · Use-case diagram</h2>
+      <p class="sub">Who can do what.</p>
+      <div class="diagram"><pre class="mermaid">
+flowchart LR
+  guest([Guest]):::a
+  user([User / Student]):::a
+  admin([Admin]):::a
+  subgraph SYS[University Management System]
+    u1[Register / Login]
+    u2[Browse courses]
+    u3[Upload avatar]
+    u4[View API docs]
+    u5[Manage users]
+    u6[Manage students]
+    u7[Manage teachers]
+    u8[Manage courses]
+  end
+  guest --> u1
+  guest --> u4
+  user --> u2
+  user --> u3
+  admin --> u2
+  admin --> u5
+  admin --> u6
+  admin --> u7
+  admin --> u8
+  admin --> u3
+  classDef a fill:#1f6feb,stroke:#58a6ff,color:#fff;
+      </pre></div>
+      <h3>Explanation</h3>
+      <ul>
+        <li><b>Guest</b> (no token) can only register/login and read the public Swagger docs.</li>
+        <li><b>User / Student</b> (authenticated, role USER) can browse courses and upload an avatar.</li>
+        <li><b>Admin</b> has full CRUD over users, students, teachers and courses.</li>
+        <li>Authorisation is enforced in <code>SecurityConfig</code>: <code>GET /api/courses</code> is for any authenticated user; all writes and the other resources are ADMIN-only.</li>
+      </ul>
+    </section>
+
+    <!-- 2 DEPLOYMENT -->
+    <section id="deploy">
+      <h2>2 · Deployment diagram</h2>
+      <p class="sub">What runs where, and how a request travels.</p>
+      <div class="diagram"><pre class="mermaid">
+flowchart TD
+  B["💻 Browser"] -->|HTTPS| CF["☁️ Cloudflare (edge TLS)"]
+  CF -->|HTTPS| NG["nginx :443 (reverse proxy)"]
+  NG -->|"/ (static files)"| FE["Next.js export — out/"]
+  NG -->|"/api · /auth · /swagger-ui"| API["Spring Boot app :8080 (java -jar, background service)"]
+  API -->|JDBC, localhost only| DB[("PostgreSQL :5432")]
+  classDef n fill:#161b22,stroke:#30363d,color:#e6edf3;
+  class B,CF,NG,FE,API,DB n;
+      </pre></div>
+      <h3>Explanation</h3>
+      <ul>
+        <li>The browser only ever talks to <b>one origin</b> (<code>karibzhanova.alma-ai.cc</code>) → <b>no CORS</b>.</li>
+        <li><b>Cloudflare</b> terminates TLS at the edge; <b>nginx</b> on the server splits traffic by path.</li>
+        <li><code>/</code> → static Next.js files (no Node process). <code>/api</code>, <code>/auth</code>, <code>/swagger-ui</code> → the Java app.</li>
+        <li>The <b>Java app</b> is a single executable JAR run continuously as a background service (auto-start on boot, auto-restart on crash), listening on internal port 8080.</li>
+        <li><b>PostgreSQL</b> is bound to localhost only — never exposed to the internet.</li>
+      </ul>
+    </section>
+
+    <!-- 3 LAYERS -->
+    <section id="layers">
+      <h2>3 · Layered architecture (component diagram)</h2>
+      <p class="sub">How a call flows through the backend layers.</p>
+      <div class="diagram"><pre class="mermaid">
+flowchart TD
+  REQ["HTTP request"] --> SEC["Security filter chain<br/>JwtFilter + SecurityConfig"]
+  SEC --> CTRL["Controllers<br/>@RestController"]
+  CTRL -->|uses| DTO["DTOs<br/>(request / response)"]
+  CTRL --> SVC["Services<br/>@Service @Transactional"]
+  SVC --> REPO["Repositories<br/>JpaRepository"]
+  REPO --> ENT["Entities<br/>@Entity"]
+  ENT --> DB[("PostgreSQL")]
+  SVC -.->|throws| EXC["Exceptions"]
+  EXC --> GEH["GlobalExceptionHandler<br/>@RestControllerAdvice"]
+  GEH -->|JSON error| OUT["HTTP response"]
+  CTRL -->|JSON| OUT
+  classDef n fill:#161b22,stroke:#30363d,color:#e6edf3;
+  class REQ,SEC,CTRL,DTO,SVC,REPO,ENT,DB,EXC,GEH,OUT n;
+      </pre></div>
+      <h3>Explanation</h3>
+      <ul>
+        <li>Every request first passes the <b>security filter chain</b> (the JWT is validated here).</li>
+        <li><b>Controllers</b> accept/return <b>DTOs</b> (never raw entities) and delegate to services.</li>
+        <li><b>Services</b> hold business logic and run inside a transaction; they call <b>repositories</b>.</li>
+        <li><b>Repositories</b> (Spring Data JPA) translate method calls into SQL against <b>entities</b>.</li>
+        <li>Any exception is caught centrally by the <b>GlobalExceptionHandler</b> and turned into a uniform JSON error with the right HTTP status.</li>
+      </ul>
+    </section>
+
+    <!-- 4 DOMAIN CLASS -->
+    <section id="domain">
+      <h2>4 · Domain class diagram</h2>
+      <p class="sub">The entities and their relationships (Labs 2 &amp; 3).</p>
+      <div class="diagram"><pre class="mermaid">
+classDiagram
+  class User {
+    +Long id
+    +String userName
+    +String email
+    +String password
+    +Role role
+    +LocalDateTime createdAt
+  }
+  class Student {
+    +Long id
+    +String studentName
+    +Integer age
+    +String groupName
+    +String email
+  }
+  class Teacher {
+    +Long id
+    +String teacherName
+  }
+  class Course {
+    +Long id
+    +String courseName
+    +Integer credits
+    +Integer maxStudents
+  }
+  class UserFile {
+    +Long id
+    +String fileName
+    +String fileType
+    +Long size
+  }
+  class Role {
+    <<enumeration>>
+    ADMIN
+    TEACHER
+    STUDENT
+    USER
+  }
+  Student "1" --> "1" User : OneToOne (user_id unique)
+  Teacher "1" --> "*" Course : OneToMany
+  Course "*" --> "1" Teacher : ManyToOne
+  Student "*" --> "*" Course : ManyToMany
+  UserFile "*" --> "1" User : ManyToOne
+  User ..> Role : uses
+      </pre></div>
+      <h3>Explanation</h3>
+      <ul>
+        <li><b>User ↔ Student</b> — one-to-one. The FK <code>user_id</code> is <code>unique</code> so no two students share a user.</li>
+        <li><b>Teacher ↔ Course</b> — one-to-many. A course belongs to one teacher; a teacher has many courses.</li>
+        <li><b>Student ↔ Course</b> — many-to-many. <code>Student</code> is the <b>owning side</b> (declares the <code>@JoinTable</code> <code>student_courses</code>); <code>Course</code> is the inverse (<code>mappedBy</code>).</li>
+        <li><b>UserFile → User</b> — many-to-one (avatars; Lab 8).</li>
+        <li>All associations are <code>LAZY</code> — related rows load only when actually used (Lab 3).</li>
+      </ul>
+    </section>
+
+    <!-- 5 ER -->
+    <section id="er">
+      <h2>5 · Entity-Relationship diagram (database)</h2>
+      <p class="sub">The actual PostgreSQL tables Hibernate generates.</p>
+      <div class="diagram"><pre class="mermaid">
+erDiagram
+  USERS ||--o| STUDENTS : "has (1:1)"
+  TEACHERS ||--o{ COURSES : "teaches (1:N)"
+  STUDENTS }o--o{ COURSES : "enrolled (M:N)"
+  USERS ||--o{ USER_FILES : "owns (1:N)"
+  USERS {
+    bigint id PK
+    varchar user_name UK
+    varchar email
+    varchar password
+    varchar role
+    timestamp created_at
+  }
+  STUDENTS {
+    bigint id PK
+    varchar student_name
+    int age
+    varchar group_name
+    varchar email
+    bigint user_id FK
+  }
+  TEACHERS {
+    bigint id PK
+    varchar teacher_name
+  }
+  COURSES {
+    bigint id PK
+    varchar course_name
+    int credits
+    int max_students
+    bigint teacher_id FK
+  }
+  STUDENT_COURSES {
+    bigint student_id FK
+    bigint course_id FK
+  }
+  USER_FILES {
+    bigint id PK
+    varchar file_name
+    varchar file_type
+    bigint size
+    bigint user_id FK
+  }
+      </pre></div>
+      <h3>Explanation</h3>
+      <ul>
+        <li>The M:N between students and courses is realised by the join table <code>student_courses</code> (two FKs).</li>
+        <li><code>users.user_name</code> is <b>unique</b> (UK); <code>students.user_id</code> is a unique FK (enforces 1:1).</li>
+        <li>Tables are created automatically from the entities (<code>spring.jpa.hibernate.ddl-auto=update</code>).</li>
+      </ul>
+    </section>
+
+    <!-- 6 STACK CLASS -->
+    <section id="stackclass">
+      <h2>6 · Layer class diagram (one resource: Course)</h2>
+      <p class="sub">How the layers wire together for a single feature.</p>
+      <div class="diagram"><pre class="mermaid">
+classDiagram
+  class CoursesRestController {
+    +findAll() List~CourseResponse~
+    +search(...) Page~CourseResponse~
+    +create(CourseFormDto) CourseResponse
+    +update(id, dto)
+    +delete(id)
+  }
+  class CourseService {
+    +findById(id) Course
+    +findAll() List~Course~
+    +create(CourseFormDto) Course
+    +search(...) Page~Course~
+  }
+  class CoursesRepository {
+    <<interface>>
+    JpaRepository~Course,Long~
+    JpaSpecificationExecutor~Course~
+  }
+  class CourseSpecification {
+    +withFilters(form) Specification~Course~
+  }
+  class CourseFormDto
+  class CourseResponse
+  class Course
+  CoursesRestController --> CourseService
+  CoursesRestController ..> CourseFormDto
+  CoursesRestController ..> CourseResponse
+  CourseService --> CoursesRepository
+  CourseService ..> CourseSpecification
+  CoursesRepository ..> Course
+  CourseResponse ..> Course : from()
+      </pre></div>
+      <h3>Explanation</h3>
+      <ul>
+        <li>The controller takes a <code>CourseFormDto</code> (validated) and returns a <code>CourseResponse</code> (safe, no lazy proxies).</li>
+        <li>The service uses <code>CourseSpecification.withFilters()</code> to build dynamic queries (Lab 6) and a sort whitelist for safe pagination.</li>
+        <li>The repository extends <code>JpaSpecificationExecutor</code> so it can run <code>findAll(Specification, Pageable)</code>.</li>
+      </ul>
+    </section>
+
+    <!-- 7 SEQ LOGIN -->
+    <section id="seq-login">
+      <h2>7 · Sequence — Login (JWT issuance, Lab 7)</h2>
+      <div class="diagram"><pre class="mermaid">
+sequenceDiagram
+  actor U as Browser
+  participant AC as AuthController
+  participant AM as AuthenticationManager
+  participant UDS as CustomUserDetailsService
+  participant DB as PostgreSQL
+  participant J as JwtUtil
+  U->>AC: POST /auth/login {userName, password}
+  AC->>AM: authenticate(userName, password)
+  AM->>UDS: loadUserByUsername(userName)
+  UDS->>DB: findByUserName(userName)
+  DB-->>UDS: User (BCrypt hash, role)
+  UDS-->>AM: UserDetails
+  AM-->>AC: Authentication OK (password matches)
+  AC->>J: generateToken(userName)
+  J-->>AC: signed JWT (HS, subject/iat/exp)
+  AC-->>U: { token, userName, role }
+      </pre></div>
+      <h3>Explanation</h3>
+      <ul>
+        <li>The <code>AuthenticationManager</code> loads the user and checks the BCrypt password.</li>
+        <li>On success, <code>JwtUtil.generateToken()</code> returns a signed token (claims: subject, issuedAt, expiration).</li>
+        <li>The browser stores the token and sends it as <code>Authorization: Bearer …</code> on later requests.</li>
+        <li>Bad credentials → <code>AuthenticationException</code> → 401 (handled globally).</li>
+      </ul>
+    </section>
+
+    <!-- 8 SEQ REQUEST -->
+    <section id="seq-request">
+      <h2>8 · Sequence — Secured request (GET /api/courses)</h2>
+      <div class="diagram"><pre class="mermaid">
+sequenceDiagram
+  actor U as Browser
+  participant NG as nginx
+  participant F as JwtFilter
+  participant SC as SecurityContext
+  participant CO as CoursesRestController
+  participant SV as CourseService
+  participant RE as CoursesRepository
+  participant DB as PostgreSQL
+  U->>NG: GET /api/courses (Bearer token)
+  NG->>F: proxy to :8080
+  F->>F: validate JWT (JwtUtil)
+  alt missing/invalid token
+    F-->>U: 401 Unauthorized
+  else valid
+    F->>SC: set Authentication (role)
+    F->>CO: continue filter chain
+    CO->>SV: findAll()
+    SV->>RE: findAll()
+    RE->>DB: SELECT * FROM courses
+    DB-->>RE: rows
+    RE-->>SV: List~Course~
+    SV-->>CO: entities (lazy init inside tx)
+    CO-->>U: 200 List~CourseResponse~
+  end
+      </pre></div>
+      <h3>Explanation</h3>
+      <ul>
+        <li><code>JwtFilter</code> runs once per request, validates the token and puts the authenticated principal (with role) into the <code>SecurityContext</code>.</li>
+        <li>No/invalid token on a protected path → 401. Wrong role → 403.</li>
+        <li>The service initialises any needed lazy associations inside the transaction, then the controller maps entities to response DTOs.</li>
+      </ul>
+    </section>
+
+    <!-- 9 SEQ CREATE -->
+    <section id="seq-create">
+      <h2>9 · Sequence — Create student (validation + relation, Labs 4/5)</h2>
+      <div class="diagram"><pre class="mermaid">
+sequenceDiagram
+  actor A as Admin
+  participant SC as StudentsRestController
+  participant V as Bean Validation
+  participant SV as StudentService
+  participant UR as UsersRepository
+  participant SR as StudentsRepository
+  participant GEH as GlobalExceptionHandler
+  A->>SC: POST /api/students (@Valid StudentFormDto)
+  SC->>V: validate DTO
+  alt invalid input
+    V-->>GEH: MethodArgumentNotValidException
+    GEH-->>A: 400 Bad Request + field errors
+  else valid
+    SC->>SV: create(form)
+    SV->>UR: findById(userId)
+    alt user not found
+      UR-->>SV: Optional.empty()
+      SV-->>GEH: EntityNotFoundException
+      GEH-->>A: 404 Not Found
+    else user exists
+      SV->>SR: existsByUserId / save(student)
+      SR-->>SV: Student
+      SV-->>SC: Student
+      SC-->>A: 201 Created (StudentResponse)
+    end
+  end
+      </pre></div>
+      <h3>Explanation</h3>
+      <ul>
+        <li>Bean validation (<code>@NotBlank</code>, <code>@Email</code>, <code>@Min</code>…) runs first; failures become a 400 with per-field messages.</li>
+        <li>The service links the student to an existing user; a missing user id → 404. (The UI prevents this by offering a user dropdown.)</li>
+        <li>A user already linked to a student → 409 via <code>BusinessException</code>.</li>
+      </ul>
+    </section>
+
+    <!-- 10 SEQ DELETE -->
+    <section id="seq-delete">
+      <h2>10 · Sequence — Delete teacher (business rule, Labs 5/9)</h2>
+      <div class="diagram"><pre class="mermaid">
+sequenceDiagram
+  actor A as Admin
+  participant TC as TeachersRestController
+  participant TS as TeacherService
+  participant TR as TeachersRepository
+  participant GEH as GlobalExceptionHandler
+  A->>TC: DELETE /api/teachers/{id}
+  TC->>TS: delete(id)
+  TS->>TR: findById(id)
+  TR-->>TS: Teacher (+ courses)
+  alt teacher has courses
+    TS-->>GEH: BusinessException
+    GEH-->>A: 409 Conflict
+  else no courses
+    TS->>TR: delete(teacher)
+    TC-->>A: 204 No Content
+  end
+      </pre></div>
+      <h3>Explanation</h3>
+      <ul>
+        <li>The rule "a teacher with assigned courses cannot be deleted" lives in <code>TeacherService.delete()</code>.</li>
+        <li>Violation → <code>BusinessException</code> → 409 Conflict. This exact rule is covered by a unit test (Lab 9).</li>
+      </ul>
+    </section>
+
+    <!-- 11 ACTIVITY -->
+    <section id="activity">
+      <h2>11 · Activity diagram — request lifecycle</h2>
+      <p class="sub">The decision flow every API call goes through.</p>
+      <div class="diagram"><pre class="mermaid">
+flowchart TD
+  S([Incoming request]) --> TLS[Cloudflare + nginx, HTTPS]
+  TLS --> R{Path?}
+  R -->|/ static| ST[Serve Next.js file] --> E([Response])
+  R -->|/api or /auth| PUB{Public endpoint?}
+  PUB -->|yes /auth, /public| CTRL
+  PUB -->|no| TOK{Valid JWT?}
+  TOK -->|no| E401[401 Unauthorized] --> E
+  TOK -->|yes| ROLE{Role allowed?}
+  ROLE -->|no| E403[403 Forbidden] --> E
+  ROLE -->|yes| CTRL[Controller → Service → Repository]
+  CTRL --> VAL{Valid + rules OK?}
+  VAL -->|no| ERR[GlobalExceptionHandler<br/>400 / 404 / 409] --> E
+  VAL -->|yes| DBOP[(DB read/write)] --> OK[200 / 201 / 204 JSON] --> E
+      </pre></div>
+      <h3>Explanation</h3>
+      <p>Static pages are served straight from disk. API calls are gated by authentication then authorisation, then run through the controller→service→repository chain. Validation and business-rule failures are converted to the correct HTTP status by the global handler; success returns the appropriate 2xx with a JSON body.</p>
+    </section>
+
+    <footer>University Management · Spring Boot · PostgreSQL · Next.js — diagrams rendered with Mermaid</footer>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'loose', flowchart: { htmlLabels: true } });
+</script>
+</body>
+</html>
