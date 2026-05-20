@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${appName}">University Management Application</title>
+    <style>
+        body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; background:#0d1117; color:#e6edf3;
+               display:flex; min-height:100vh; align-items:center; justify-content:center; margin:0; }
+        .card { background:#161b22; border:1px solid #30363d; border-radius:14px; padding:40px 48px; max-width:560px; }
+        h1 { margin:0 0 8px; }
+        p { color:#9aa7b4; }
+        a { color:#58a6ff; }
+        code { background:#0b0f14; padding:2px 7px; border-radius:5px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1 th:text="${appName}">University Management Application</h1>
+        <p>Spring Boot lab project (labs 1-10). This page is served by an MVC
+            <code>@Controller</code> via Thymeleaf — proof of Lab 1's MVC-vs-REST distinction.</p>
+        <p>Explore the REST API and authenticate in Swagger:
+            <a th:href="${docsUrl}" href="/swagger-ui.html">/swagger-ui.html</a></p>
+        <p>Try a REST endpoint: <code>GET /hello/Alice?lang=ru</code></p>
+    </div>
+</body>
+</html>
