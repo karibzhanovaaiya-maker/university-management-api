@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
 import { useT } from "@/lib/i18n";
-import { Controls } from "@/components/Controls";
+import { TopNav } from "@/components/TopNav";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -32,12 +32,9 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col px-5">
-      <div className="flex justify-between py-5">
-        <Link href="/" className="font-bold">🎓 University</Link>
-        <Controls />
-      </div>
-      <div className="flex flex-1 flex-col justify-center pb-16">
+    <>
+      <TopNav />
+      <main className="mx-auto max-w-md px-5 pb-16 pt-12">
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-bold">{t("auth.signInTitle")}</h1>
           <p className="mt-1 text-sm text-muted">{t("auth.signInSub")}</p>
@@ -61,7 +58,7 @@ export default function LoginPage() {
         <p className="mt-5 text-center text-sm text-muted">
           {t("auth.noAccount")} <Link href="/register" className="text-accent">{t("auth.createOne")}</Link>
         </p>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }

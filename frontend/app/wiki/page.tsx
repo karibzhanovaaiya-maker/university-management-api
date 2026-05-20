@@ -1,9 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useT } from "@/lib/i18n";
-import { useTheme } from "@/lib/theme";
-import { Controls } from "@/components/Controls";
+import { TopNav } from "@/components/TopNav";
 
 const STACK = [
   "Spring Boot 3.5", "Java 17", "Spring Data JPA", "Hibernate", "Spring Security",
@@ -22,15 +20,11 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
 
 export default function WikiPage() {
   const { t, tArr } = useT();
-  const { theme } = useTheme();
-  const logo = theme === "dark" ? "/iitu-dark.png" : "/iitu-light.png";
 
   return (
-    <main className="mx-auto max-w-3xl px-5 pb-16">
-      <header className="flex items-center justify-between py-5">
-        <Link href="/"><img src={logo} alt="IITU" className="h-8 w-auto" /></Link>
-        <Controls />
-      </header>
+    <>
+    <TopNav />
+    <main className="mx-auto max-w-3xl px-5 pb-16 pt-6">
 
       {/* Profile */}
       <section className="card flex items-center gap-4 p-5">
@@ -90,5 +84,6 @@ psql university_db < backup.sql      # restore`}</pre>
         </a>
       </section>
     </main>
+    </>
   );
 }
